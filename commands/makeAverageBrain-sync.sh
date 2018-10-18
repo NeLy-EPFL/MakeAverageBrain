@@ -69,20 +69,20 @@ NOIMAGES=`ls -l ${REGROOT}/images/*.nrrd | wc -l`
 #         - reformatted
 
 # You shouldn't need to change these
-GJROOT="/lmb/home/jefferis"
-MUNGERDIR="$GJROOT/bin"
-export REGBINDIR="$GJROOT/dev/neuroanat/cmtk/core/build/bin"
+GJROOT="/home/NeLy/aymanns"
+MUNGERDIR="/usr/local/bin"
+export REGBINDIR="/usr/lib/cmtk/bin"
 
 # make output directories that we'll need later
 mkdir -p "$REGROOT/jobs"
 mkdir -p "$REGROOT/average"
 
 
-if [ -z "$SGE_EMAIL" ]; then
-	LMBUSER=`whoami`
-else
-	LMBUSER=$SGE_EMAIL
-fi
+#if [ -z "$SGE_EMAIL" ]; then
+#	LMBUSER=`whoami`
+#else
+#	LMBUSER=$SGE_EMAIL
+#fi
 
 i=1
 while [ $i -le $NOITERATIONS ]; do
@@ -94,7 +94,7 @@ while [ $i -le $NOITERATIONS ]; do
 	# which waits until (all?) array jobs are finished
 	CURREFBRAIN=${REFBRAIN}${i}
 	# passed REFBRAIN REGROOT REGBINDIR and MUNGERDIR variables
-	qsub -wd "$REGROOT/jobs" -sync yes -t 1-${NOIMAGES} -S /bin/bash -m eas -M ${LMBUSER}@lmb.internal -pe smp 4 "$REGROOT"/commands/warpcmdIteration.sh ${CURREFBRAIN} ${REGROOT} ${REGBINDIR} ${MUNGERDIR}
+	"$REGROOT"/commands/warpcmdIteration.sh ${CURREFBRAIN} ${REGROOT} ${REGBINDIR} ${MUNGERDIR}
 	
 	# add one to $i and therefore the number of the refbrain e.g. IS2-1 goes to IS2-2
 	i=`echo "1 + $i" | bc`
