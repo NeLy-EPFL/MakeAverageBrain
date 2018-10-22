@@ -13,6 +13,7 @@ argPath=commandArgs(trailingOnly = TRUE)
 NEWREFPATH = argPath[1]
 SYMREFPATH = argPath[2]
 AXIS       = argPath[3]
+REGBINDIR  = argPath[4]
 
 # for cmtk.reformatx
 if(!require(nat)) stop('Please run:\ninstall.packages("nat")\nin R!')
@@ -32,7 +33,7 @@ MakeFlippedImage<-function(infile,outfile,axis="x"){
 	return(outfile)
 }
 
-CalculateRegistration<-function(template,floating,outfolder,threads=8){
+CalculateRegistration<-function(template,floating,outfolder,threads=28){
 	Sys.setenv(CMTK_NUM_THREADS=threads)
 	# nb translate and rotate only, no scale or shear
 	cmd=paste("registration -i -v --dofs 6 --outlist",shQuote(outfolder),shQuote(template),shQuote(floating))
@@ -45,7 +46,7 @@ CalculateRegistration<-function(template,floating,outfolder,threads=8){
 MakeHalvedAffineRegistration<-function(infolder,outfolder){
 	if(missing(outfolder))
 		outfolder=sub("\\.list","-halved.list",infolder)
-	
+
 	reg=read.cmtkreg(infolder)
 	reg$registration$affine_xform$xlate=reg$registration$affine_xform$xlate/2
 	reg$registration$affine_xform$rotate=reg$registration$affine_xform$rotate/2

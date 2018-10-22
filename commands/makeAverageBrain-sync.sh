@@ -26,9 +26,6 @@ if [ -z "$1" -o -z "$2" ]; then
 	echo "REGROOT - images    (where your input images (*.nrrd) live)"
 	echo "        - refbrain  (where your nrrd reference brain lives)"
 	echo "        - commands  (location of script files)"
-	echo "you change the lmb user name to whom email is sent by doing e.g."
-	echo "setenv SGE_EMAIL lgoetz"
-	echo "before running the script"
 	exit
 fi
 
@@ -69,20 +66,15 @@ NOIMAGES=`ls -l ${REGROOT}/images/*.nrrd | wc -l`
 #         - reformatted
 
 # You shouldn't need to change these
-GJROOT="/home/NeLy/aymanns"
-MUNGERDIR="/usr/local/bin"
-export REGBINDIR="/usr/lib/cmtk/bin"
+AYMANNSROOT="/home/aymanns"
+MUNGERDIR="$AYMANNSROOT/usr/local/bin"
+echo $MUNGERDIR
+export REGBINDIR="$AYMANNSROOT/usr/local/bin"
+export PATH="$REGBINDIR:$PATH"
 
 # make output directories that we'll need later
 mkdir -p "$REGROOT/jobs"
 mkdir -p "$REGROOT/average"
-
-
-#if [ -z "$SGE_EMAIL" ]; then
-#	LMBUSER=`whoami`
-#else
-#	LMBUSER=$SGE_EMAIL
-#fi
 
 i=1
 while [ $i -le $NOITERATIONS ]; do
@@ -94,7 +86,8 @@ while [ $i -le $NOITERATIONS ]; do
 	# which waits until (all?) array jobs are finished
 	CURREFBRAIN=${REFBRAIN}${i}
 	# passed REFBRAIN REGROOT REGBINDIR and MUNGERDIR variables
-	"$REGROOT"/commands/warpcmdIteration.sh ${CURREFBRAIN} ${REGROOT} ${REGBINDIR} ${MUNGERDIR}
+	sbatch --mail-user=aymanns --mail-type=FAIL --array=1-${NOIMAGES} --wait --nodes 1 --ntasks 1 --cpus-per-task 28 --time 1:30:00 --mem 128G --partition parallel --workdir "$REGROOT"/jobs "$REGROOT"/commands/warpcmdIteration.sh ${CURREFBRAIN} ${REGROOT} ${REGBINDIR} ${MUNGERDIR}
+	#sbatch --mail-user=aymanns --mail-type=FAIL --wait --nodes 1 --ntasks 1 --cpus-per-task 28 --time 1:00:00 --mem 128G --partition debug --workdir "$REGROOT"/jobs "$REGROOT"/commands/warpcmdIteration.sh ${CURREFBRAIN} ${REGROOT} ${REGBINDIR} ${MUNGERDIR}
 	
 	# add one to $i and therefore the number of the refbrain e.g. IS2-1 goes to IS2-2
 	i=`echo "1 + $i" | bc`
@@ -102,9 +95,7 @@ while [ $i -le $NOITERATIONS ]; do
 
 	if [ ! -f "${REGROOT}/refbrain/${NEWREFBRAIN}.nrrd" ] ; then
 		# if average brain doesn't exist (eg if a run was interrupted then make it)
-		#qsub -sync yes -wd "$REGROOT/jobs" -S /bin/bash -m eas -M ${LMBUSER}@lmb.internal -pe smp 8 "$REGROOT/commands/avgcmdIterationPadOut.sh" ${CURREFBRAIN} ${NEWREFBRAIN} ${REGROOT} ${REGBINDIR}
-		cd "$REGROOT/jobs" && /bin/bash "$REGROOT/commands/avgcmdIterationPadOut.sh" ${CURREFBRAIN} ${NEWREFBRAIN} ${REGROOT} ${REGBINDIR}
-		cd "$REGROOT"
+		sbatch --mail-user=aymanns --mail-type=FAIL --wait --nodes 1 --ntasks 1 --cpus-per-task 28 --time 1:00:00 --mem 128G --partition debug --workdir "$REGROOT/jobs" "$REGROOT/commands/avgcmdIterationPadOut.sh" ${CURREFBRAIN} ${NEWREFBRAIN} ${REGROOT} ${REGBINDIR}
 	fi
 	if [ ! -f "${REGROOT}/refbrain/${NEWREFBRAIN}.nrrd" ] ; then
 		echo Exiting $PROGNAME since avg_adm failed to make $NEWREFBRAIN
@@ -119,7 +110,4 @@ SYMREFPATH="$REGROOT/refbrain/$SYMREFBRAIN.nrrd"
 
 echo Making $NEWREFBRAIN symmetric
 # make the brain symmetric
-# qsub -wd "$REGROOT/jobs" -S /bin/bash -m eas -M ${LMBUSER}@lmb.internal -pe smp 8 "$REGROOT/commands/symmetricOutput.sh" ${NEWREFPATH} ${SYMREFPATH} ${GJROOT} ${REGROOT}
-
-cd "$REGROOT/jobs" && /bin/bash "$REGROOT/commands/symmetricOutput.sh" ${NEWREFPATH} ${SYMREFPATH} ${AXIS}
-cd "$REGROOT"
+sbatch --mail-user=aymanns --mail-type=FAIL,END --wait --nodes 1 --ntasks 1 --cpus-per-task 28 --time 1:00:00 --mem 128G --partition debug --workdir "$REGROOT/jobs" "$REGROOT/commands/symmetricOutput.sh" ${NEWREFPATH} ${SYMREFPATH} ${AXIS} ${REGROOT} ${REGBINDIR}

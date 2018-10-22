@@ -1,5 +1,9 @@
 #!/bin/sh
 # 2009-05-18 15:36:03 BST
+
+ml load gcc/7.3.0
+ml load fftw/3.3.7-openmp
+
 REFBRAIN=$1
 AVGBRAIN=$2
 REGROOT=$3
