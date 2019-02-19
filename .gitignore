@@ -1,0 +1,6 @@
+jobs/*.out
+jobs/*.txt
+**.nrrd
+**.swp
+Registration
+average
