@@ -4,7 +4,7 @@
 
 module load intel intel-mkl
 module load r
-module load fftw/3.3.7-openmp
+module load fftw/3.3.8-openmp
 
 NEWREFPATH=$1
 SYMREFPATH=$2

@@ -1,14 +1,14 @@
 #!/bin/bash
 #SBATCH -p debug
-#SBATCH --workdir /home/aymanns/MakeAverageVNC/jobs
+#SBATCH --chdir /home/aymanns/MakeAverageVNC/jobs
 #SBATCH --nodes 1
 #SBATCH --ntasks 1
 #SBATCH --cpus-per-task 28
 #SBATCH --mem 64G
 #SBATCH --time 01:00:00
 
-ml load gcc/7.3.0
-ml load fftw/3.3.7-openmp
+ml load gcc/7.4.0
+ml load fftw/3.3.8-openmp
 
 # passed REFBRAIN REGROOT REGBINDIR and MUNGERDIR variables
 REFBRAIN='refVNC-6-symmetric'

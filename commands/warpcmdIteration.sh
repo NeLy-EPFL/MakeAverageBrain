@@ -1,7 +1,7 @@
 #!/bin/bash
 
-ml load gcc/7.3.0
-ml load fftw/3.3.7-openmp
+ml load gcc/7.4.0
+ml load fftw/3.3.8-openmp
 
 # passed REFBRAIN REGROOT REGBINDIR and MUNGERDIR variables
 MY_HOST=`hostname`

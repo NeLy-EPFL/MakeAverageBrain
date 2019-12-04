@@ -86,8 +86,8 @@ while [ $i -le $NOITERATIONS ]; do
 	# which waits until (all?) array jobs are finished
 	CURREFBRAIN=${REFBRAIN}${i}
 	# passed REFBRAIN REGROOT REGBINDIR and MUNGERDIR variables
-	sbatch --mail-user=aymanns --mail-type=FAIL --array=1-${NOIMAGES} --wait --nodes 1 --ntasks 1 --cpus-per-task 28 --time 2:30:00 --mem 128G --partition parallel --workdir "$REGROOT"/jobs "$REGROOT"/commands/warpcmdIteration.sh ${CURREFBRAIN} ${REGROOT} ${REGBINDIR} ${MUNGERDIR}
-	#sbatch --mail-user=aymanns --mail-type=FAIL --wait --nodes 1 --ntasks 1 --cpus-per-task 28 --time 1:00:00 --mem 128G --partition debug --workdir "$REGROOT"/jobs "$REGROOT"/commands/warpcmdIteration.sh ${CURREFBRAIN} ${REGROOT} ${REGBINDIR} ${MUNGERDIR}
+	sbatch --mail-user=aymanns --mail-type=FAIL --array=1-${NOIMAGES} --wait --nodes 1 --ntasks 1 --cpus-per-task 28 --time 2:30:00 --mem 128G --partition parallel --chdir "$REGROOT"/jobs "$REGROOT"/commands/warpcmdIteration.sh ${CURREFBRAIN} ${REGROOT} ${REGBINDIR} ${MUNGERDIR}
+	#sbatch --mail-user=aymanns --mail-type=FAIL --wait --nodes 1 --ntasks 1 --cpus-per-task 28 --time 1:00:00 --mem 128G --partition debug --chdir "$REGROOT"/jobs "$REGROOT"/commands/warpcmdIteration.sh ${CURREFBRAIN} ${REGROOT} ${REGBINDIR} ${MUNGERDIR}
 	
 	# add one to $i and therefore the number of the refbrain e.g. IS2-1 goes to IS2-2
 	i=`echo "1 + $i" | bc`
@@ -95,7 +95,7 @@ while [ $i -le $NOITERATIONS ]; do
 
 	if [ ! -f "${REGROOT}/refbrain/${NEWREFBRAIN}.nrrd" ] ; then
 		# if average brain doesn't exist (eg if a run was interrupted then make it)
-		sbatch --mail-user=aymanns --mail-type=FAIL --wait --nodes 1 --ntasks 1 --cpus-per-task 28 --time 2:30:00 --mem 128G --partition parallel --workdir "$REGROOT/jobs" "$REGROOT/commands/avgcmdIterationPadOut.sh" ${CURREFBRAIN} ${NEWREFBRAIN} ${REGROOT} ${REGBINDIR}
+		sbatch --mail-user=aymanns --mail-type=FAIL --wait --nodes 1 --ntasks 1 --cpus-per-task 28 --time 2:30:00 --mem 128G --partition parallel --chdir "$REGROOT/jobs" "$REGROOT/commands/avgcmdIterationPadOut.sh" ${CURREFBRAIN} ${NEWREFBRAIN} ${REGROOT} ${REGBINDIR}
 	fi
 	if [ ! -f "${REGROOT}/refbrain/${NEWREFBRAIN}.nrrd" ] ; then
 		echo Exiting $PROGNAME since avg_adm failed to make $NEWREFBRAIN
@@ -110,4 +110,4 @@ SYMREFPATH="$REGROOT/refbrain/$SYMREFBRAIN.nrrd"
 
 echo Making $NEWREFBRAIN symmetric
 # make the brain symmetric
-sbatch --mail-user=aymanns --mail-type=FAIL,END --wait --nodes 1 --ntasks 1 --cpus-per-task 28 --time 1:00:00 --mem 128G --partition debug --workdir "$REGROOT/jobs" "$REGROOT/commands/symmetricOutput.sh" ${NEWREFPATH} ${SYMREFPATH} ${AXIS} ${REGROOT} ${REGBINDIR}
+sbatch --mail-user=aymanns --mail-type=FAIL,END --wait --nodes 1 --ntasks 1 --cpus-per-task 28 --time 1:00:00 --mem 128G --partition debug --chdir "$REGROOT/jobs" "$REGROOT/commands/symmetricOutput.sh" ${NEWREFPATH} ${SYMREFPATH} ${AXIS} ${REGROOT} ${REGBINDIR}
