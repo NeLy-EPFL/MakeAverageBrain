@@ -76,7 +76,7 @@ export PATH="$REGBINDIR:$PATH"
 mkdir -p "$REGROOT/jobs"
 mkdir -p "$REGROOT/average"
 
-i=1
+i=5
 while [ $i -le $NOITERATIONS ]; do
 	# Starts a round of registrations using the template corresponding to the present iteration
 	# note the use of -t to make $NUMJOBS separate array jobs
