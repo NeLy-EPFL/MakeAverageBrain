@@ -13,3 +13,10 @@ install.packages("devtools")
 devtools::install_github("jefferis/nat")
 
 Download CMTK tar and extract it in home directory
+
+
+Loading nessecassy modules
+--------------------------
+This step should be done automatically by the makeAverageBrain command.
+The required module is fftw compiled with openmp. To be able to load that
+module gcc has to be loaded first.
