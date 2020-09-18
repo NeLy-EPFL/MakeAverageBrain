@@ -22,12 +22,20 @@ CMTK should be installed from source.
 10. `cmake -C ../core/config/gcc-x86_64-sse.cmake ../core/`
 11. `make`
 
+
+Adjustments in register_confocal_image.sh
+=========================================
+
 Fiji
-====
-Make sure fiji is installed and change the path to the executable in `register_confocal_image.sh` if necessary.
+----
+Make sure fiji is installed and change the path to the executable if necessary.
 It is set to `/opt/Fiji.app/ImageJ-linux64`.
 
 Absolut paths
-=============
+-------------
 Change the `MUNGERDIR` and `REGBINDIR` variables if needed to matche the location of your cmtk installation.
 If you followed the steps above to install CMTK you will only have to change `confocal_reg` to your username.
+
+Number of threats
+-----------------
+Adjust the number of threats to match the number of cores on your machine by chaning the number after `-T`.

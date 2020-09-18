@@ -8,3 +8,5 @@ If such a folder already exist the script should fail. If you are worried that t
 
 Open the `register_confocal_image.sh` file and change the `REGROOT`, `FILE` and `REFBRAIN` variables as needed.
 To run the registation use `cd` to navigate to the directory where `register_confocal_image.sh` is located and run `./register_confocal_image.sh`.
+
+If multiple users are using the same workstation, you might want to consider to reduce the number of threads. You can do so by changing the number after `-T` in `register_confocal_image.sh`. 
